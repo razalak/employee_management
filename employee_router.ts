@@ -1,7 +1,7 @@
 import express from "express";
 import Employee from "./entities/employee.entity";
-import datasource from "../session-05-starter/db/data-source";
 import { Entity } from "typeorm";
+import datasource from "./db/data-source";
 
 const employeeRouter = express.Router();
 

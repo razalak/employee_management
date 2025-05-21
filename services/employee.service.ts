@@ -35,3 +35,5 @@ class EmployeeService{
     await this.employeeRepository.deleteOneByID(id);
    }
 }
+
+export default EmployeeService;
