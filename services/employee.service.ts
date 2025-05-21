@@ -1,13 +1,16 @@
 import EmployeeRepository from "../repositories/employee.repositories";
 import Employee from "../entities/employee.entity";
+import Address from "../entities/address.entity";
 
 class EmployeeService{
     constructor(private employeeRepository:EmployeeRepository){}
 
-    async createEmployee(email:string,name:string):Promise<Employee>{
-        const newEmployee=new Employee;
+    async createEmployee(email:string,name:string,age:number,address:Address):Promise<Employee>{
+        const newEmployee=new Employee();
         newEmployee.name=name;
         newEmployee.email=email;
+        newEmployee.age=age;
+        newEmployee.address=address;
         return this.employeeRepository.create(newEmployee);
     }
 
@@ -32,7 +35,12 @@ class EmployeeService{
    }
 
    async deleteEmployeeByID(id:number):Promise<void>{
+     const employee=await this.employeeRepository.findOneByID(id);
     await this.employeeRepository.deleteOneByID(id);
+   }
+
+   async remove(empid:number):Promise<void>{
+    await this.employeeRepository.remove(empid);
    }
 }
 
