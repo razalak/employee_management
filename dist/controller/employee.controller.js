@@ -17,6 +17,7 @@ const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const create_employee_dto_1 = require("../dto/create-employee.dto");
 const address_entity_1 = __importDefault(require("../entities/address.entity"));
+const authorization_middleware_1 = require("../middlewares/authorization.middleware");
 class EmployeeController {
     constructor(employeeService, router) {
         this.employeeService = employeeService;
@@ -34,9 +35,9 @@ class EmployeeController {
         });
         router.get("/", this.getAllEmployee.bind(this));
         router.get("/:id", this.getEmployeeByID.bind(this));
-        router.post("/", this.createEmployee.bind(this));
-        router.put("/:id", this.updateEmployee.bind(this));
-        router.delete("/:id", this.deleteEmployeeByID);
+        router.post("/", authorization_middleware_1.authorizationMiddleware, this.createEmployee.bind(this));
+        router.put("/:id", authorization_middleware_1.authorizationMiddleware, this.updateEmployee.bind(this));
+        router.delete("/:id", authorization_middleware_1.authorizationMiddleware, this.deleteEmployeeByID);
     }
     createEmployee(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -52,7 +53,7 @@ class EmployeeController {
                 const address = new address_entity_1.default();
                 address.line1 = createEmployeeDto.address.line1;
                 address.pincode = createEmployeeDto.address.pincode;
-                const savedEmployee = yield this.employeeService.createEmployee(createEmployeeDto.email, createEmployeeDto.name, createEmployeeDto.age, address);
+                const savedEmployee = yield this.employeeService.createEmployee(createEmployeeDto.email, createEmployeeDto.name, createEmployeeDto.age, address, createEmployeeDto.password, createEmployeeDto.role);
                 res.status(201).send(savedEmployee);
             }
             catch (error) {

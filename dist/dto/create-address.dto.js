@@ -15,8 +15,9 @@ class createAddressDto {
 }
 exports.createAddressDto = createAddressDto;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsEmail)(),
+    (0, class_validator_1.IsNotEmpty)()
+    // @IsEmail()
+    ,
     __metadata("design:type", String)
 ], createAddressDto.prototype, "line1", void 0);
 __decorate([

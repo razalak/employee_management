@@ -5,13 +5,19 @@ import { processTimeMiddleware } from "./middlewares/processTimeMiddleware";
 import {Client,ClientConfig} from 'pg';
 import datasource from "./db/data-source"
 import errorMiddleware from "./middlewares/errorHandlingMiddleware";
+import authRouter from "./routes/auth.routes";
+import authMiddleware from "./middlewares/auth.Middleware";
+import { LoggerService } from "./services/logger.service";
 
 const server = express();
+const logger=LoggerService.getInstance('app()');
+
 server.use(express.json());
 server.use(loggerMiddleware);
 server.use(processTimeMiddleware);
 
-server.use("/employees", employeeRouter);
+server.use("/employees",authMiddleware, employeeRouter);
+server.use("/auth",authRouter);
 server.use(errorMiddleware);
 
 server.get("/", (req: Request, res: Response) => {
@@ -21,13 +27,13 @@ server.get("/", (req: Request, res: Response) => {
 (async()=>{
   try{
     await datasource.initialize();
-    console.log('connected');
+    logger.info('connected');
   }catch{
-    console.error('failed to connect to db');
+    logger.error('failed to connect to db');
     process.exit(1);
   }
   server.listen(3000, () => {
-  console.log("server listening to 3000");
+  logger.info("server listening to 3000");
 });
 })();
 

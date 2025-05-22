@@ -8,14 +8,14 @@ import { validate } from "class-validator";
 import { CreateEmployeeDto } from "../dto/create-employee.dto";
 import { createAddressDto } from "../dto/create-address.dto";
 import Address from "../entities/address.entity";
-
+import { authorizationMiddleware } from "../middlewares/authorization.middleware";
 class EmployeeController{
     constructor(private employeeService:EmployeeService,router:Router){
         router.get("/",this.getAllEmployee.bind(this));
         router.get("/:id",this.getEmployeeByID.bind(this));
-        router.post("/",this.createEmployee.bind(this));
-        router.put("/:id",this.updateEmployee.bind(this));
-        router.delete("/:id",this.deleteEmployeeByID);
+        router.post("/",authorizationMiddleware,this.createEmployee.bind(this));
+        router.put("/:id",authorizationMiddleware,this.updateEmployee.bind(this));
+        router.delete("/:id",authorizationMiddleware,this.deleteEmployeeByID);
     }
 
     async  createEmployee(req:Request,res:Response,next:NextFunction){
@@ -37,7 +37,9 @@ class EmployeeController{
         createEmployeeDto.email,
         createEmployeeDto.name,
         createEmployeeDto.age,
-        address
+        address,
+        createEmployeeDto.password,
+        createEmployeeDto.role
       );
       res.status(201).send(savedEmployee);
     } catch (error) {

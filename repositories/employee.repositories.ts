@@ -22,6 +22,14 @@ class EmployeeRepository{
             }
         });
     }
+        async findOneByEmail(email:string):Promise <Employee|null>{
+        return this.repository.findOne({
+            where:{email},
+            relations:{
+                address:true
+            }
+        });
+    }
     async update(id:number,employee:Employee):Promise <void>{
         await this.repository.save({id,...employee});
     }

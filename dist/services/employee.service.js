@@ -13,17 +13,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const employee_entity_1 = __importDefault(require("../entities/employee.entity"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const logger_service_1 = require("./logger.service");
 class EmployeeService {
     constructor(employeeRepository) {
         this.employeeRepository = employeeRepository;
+        this.logger = logger_service_1.LoggerService.getInstance(EmployeeService.name);
     }
-    createEmployee(email, name, age, address) {
+    createEmployee(email, name, age, address, password, role) {
         return __awaiter(this, void 0, void 0, function* () {
             const newEmployee = new employee_entity_1.default();
             newEmployee.name = name;
             newEmployee.email = email;
             newEmployee.age = age;
             newEmployee.address = address;
+            newEmployee.password = yield bcrypt_1.default.hash(password, 10);
+            newEmployee.role = role;
             return this.employeeRepository.create(newEmployee);
         });
     }
@@ -34,7 +39,16 @@ class EmployeeService {
     }
     getEmployeeByID(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.employeeRepository.findOneByID(id);
+            let employee = this.employeeRepository.findOneByID(id);
+            if (!employee) {
+                throw new Error("Employee Not Found");
+            }
+            return employee;
+        });
+    }
+    getEmployeeByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return this.employeeRepository.findOneByEmail(email);
         });
     }
     updateEmployee(id, name, email) {

@@ -7,8 +7,8 @@ import EmployeeService from '../services/employee.service';
 
 const employeeRouter=Router();
 
-const employeeRepository=new EmployeeRepository(datasource.getRepository(Employee));
-const employeeService=new EmployeeService(employeeRepository);
-const employeeController=new EmployeeController(employeeService,employeeRouter);
+export const employeeRepository=new EmployeeRepository(datasource.getRepository(Employee));
+export const employeeService=new EmployeeService(employeeRepository);
+export const employeeController=new EmployeeController(employeeService,employeeRouter);
 
 export default employeeRouter;
