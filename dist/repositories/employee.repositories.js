@@ -8,7 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+const httpException_1 = __importDefault(require("../exceptions/httpException"));
 class EmployeeRepository {
     constructor(repository) {
         this.repository = repository;
@@ -22,7 +26,8 @@ class EmployeeRepository {
         return __awaiter(this, void 0, void 0, function* () {
             return this.repository.find({
                 relations: {
-                    address: true
+                    address: true,
+                    department: true
                 }
             });
         });
@@ -32,7 +37,8 @@ class EmployeeRepository {
             return this.repository.findOne({
                 where: { id },
                 relations: {
-                    address: true
+                    address: true,
+                    department: true
                 }
             });
         });
@@ -42,7 +48,8 @@ class EmployeeRepository {
             return this.repository.findOne({
                 where: { email },
                 relations: {
-                    address: true
+                    address: true,
+                    department: true
                 }
             });
         });
@@ -54,15 +61,10 @@ class EmployeeRepository {
     }
     deleteOneByID(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.repository.delete({ id });
-        });
-    }
-    remove(empid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const employee = yield this.findOneByID(empid);
-            if (employee) {
-                yield this.repository.delete(employee);
-            }
+            const employee = yield this.findOneByID(id);
+            if (!employee)
+                throw new httpException_1.default(404, "employee not found");
+            yield this.repository.softRemove(employee);
         });
     }
 }

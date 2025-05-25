@@ -21,13 +21,15 @@ const errorHandlingMiddleware_1 = __importDefault(require("./middlewares/errorHa
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const auth_Middleware_1 = __importDefault(require("./middlewares/auth.Middleware"));
 const logger_service_1 = require("./services/logger.service");
+const department_routes_1 = __importDefault(require("./routes/department.routes"));
 const server = (0, express_1.default)();
 const logger = logger_service_1.LoggerService.getInstance('app()');
 server.use(express_1.default.json());
 server.use(loggerMiddleware_1.default);
 server.use(processTimeMiddleware_1.processTimeMiddleware);
-server.use("/employees", auth_Middleware_1.default, employee_routes_1.default);
 server.use("/auth", auth_routes_1.default);
+server.use("/employees", auth_Middleware_1.default, employee_routes_1.default);
+server.use("/department", department_routes_1.default);
 server.use(errorHandlingMiddleware_1.default);
 server.get("/", (req, res) => {
     res.status(200).send("Hello world");

@@ -4,12 +4,14 @@ import HttpException from "../exceptions/httpException";
 import EmployeeService from "./employee.service";
 import bcrypt from "bcrypt";
 import  jwt from "jsonwebtoken";
+import { LoggerService } from "./logger.service";
 
 class authService{
     constructor(private employeeService:EmployeeService){}
-
+    private logger=LoggerService.getInstance('AuthService');
     async login(email:string,password:string){
         const employee=await this.employeeService.getEmployeeByEmail(email);
+        this.logger.info(employee);
         if(!employee){
             throw new HttpException(404,"no such user");
         }

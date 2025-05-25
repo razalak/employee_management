@@ -14,7 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const typeorm_1 = require("typeorm");
 const abstract_entity_1 = __importDefault(require("./abstract.entity"));
-const address_entity_1 = __importDefault(require("./address.entity"));
+const employee_entity_1 = __importDefault(require("./employee.entity"));
 let Department = class Department extends abstract_entity_1.default {
 };
 __decorate([
@@ -26,15 +26,15 @@ __decorate([
     __metadata("design:type", String)
 ], Department.prototype, "dpt_name", void 0);
 __decorate([
-    (0, typeorm_1.OneToOne)(() => address_entity_1.default, (address) => address.employee, {
+    (0, typeorm_1.OneToMany)(() => employee_entity_1.default, (employee) => employee.department, {
         cascade: true,
         onDelete: "CASCADE"
     }),
-    (0, typeorm_1.JoinColumn)(),
-    __metadata("design:type", address_entity_1.default)
-], Department.prototype, "address", void 0);
+    __metadata("design:type", Array)
+], Department.prototype, "employees", void 0);
 Department = __decorate([
     (0, typeorm_1.Entity)()
 ], Department);
+;
 exports.default = Department;
 //# sourceMappingURL=department.entity.js.map

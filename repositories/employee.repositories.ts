@@ -1,6 +1,7 @@
 import { Repository } from "typeorm";
 import Employee from "../entities/employee.entity";
 import Address from "../entities/address.entity";
+import HttpException from "../exceptions/httpException";
 class EmployeeRepository{
     constructor(private repository:Repository<Employee>){}
 
@@ -10,7 +11,8 @@ class EmployeeRepository{
     async findMany():Promise <Employee[]>{
         return this.repository.find({
             relations:{
-                address:true
+                address:true,
+                department:true
             }
         });
     }
@@ -18,15 +20,18 @@ class EmployeeRepository{
         return this.repository.findOne({
             where:{id},
             relations:{
-                address:true
+                address:true,
+                department:true
             }
         });
     }
-        async findOneByEmail(email:string):Promise <Employee|null>{
+
+    async findOneByEmail(email:string):Promise <Employee|null>{
         return this.repository.findOne({
             where:{email},
             relations:{
-                address:true
+                address:true,
+                department:true
             }
         });
     }
@@ -34,15 +39,11 @@ class EmployeeRepository{
         await this.repository.save({id,...employee});
     }
     async deleteOneByID(id:number):Promise<void>{
-        await this.repository.delete({id});
+        const employee=await this.findOneByID(id);
+        if(!employee) throw new HttpException(404,"employee not found");
+        await this.repository.softRemove(employee);
     }
 
-     async remove(empid:number):Promise<void>{
-        const employee=await this.findOneByID(empid);
-        if(employee){
-        await this.repository.delete(employee);
-        }
-    }
 };
 
 export default EmployeeRepository;

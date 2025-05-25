@@ -17,27 +17,48 @@ const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const create_employee_dto_1 = require("../dto/create-employee.dto");
 const address_entity_1 = __importDefault(require("../entities/address.entity"));
-const authorization_middleware_1 = require("../middlewares/authorization.middleware");
+const department_entity_1 = __importDefault(require("../entities/department.entity"));
+const employee_entity_1 = require("../entities/employee.entity");
+const authorization_middleware_1 = __importDefault(require("../middlewares/authorization.middleware"));
 class EmployeeController {
     constructor(employeeService, router) {
         this.employeeService = employeeService;
-        this.updateEmployee = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const id = req.params.id;
-            const name = req.params.name;
-            const email = req.params.email;
-            yield this.employeeService.updateEmployee(id, name, email);
-            res.status(200).send();
+        this.updateEmployee = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = req.params.id;
+                const name = req.body.name;
+                const email = req.body.email;
+                const age = req.body.age;
+                const address = req.body.address;
+                const password = req.body.password;
+                const role = req.body.role;
+                const department = req.body.department;
+                const status = req.body.status;
+                const joiningdate = req.body.joiningdate;
+                const experience = req.body.experience;
+                yield this.employeeService.updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, experience);
+                res.status(200).send();
+            }
+            catch (error) {
+                console.error(error);
+                next();
+            }
         });
-        this.deleteEmployeeByID = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const id = req.params.id;
-            yield this.employeeService.deleteEmployeeByID(id);
-            res.status(200).send();
+        this.deleteEmployeeByID = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = req.params.id;
+                yield this.employeeService.deleteEmployeeByID(id);
+                res.status(200).send();
+            }
+            catch (error) {
+                next(error);
+            }
         });
         router.get("/", this.getAllEmployee.bind(this));
         router.get("/:id", this.getEmployeeByID.bind(this));
-        router.post("/", authorization_middleware_1.authorizationMiddleware, this.createEmployee.bind(this));
-        router.put("/:id", authorization_middleware_1.authorizationMiddleware, this.updateEmployee.bind(this));
-        router.delete("/:id", authorization_middleware_1.authorizationMiddleware, this.deleteEmployeeByID);
+        router.post("/", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.DEVELOPER), this.createEmployee.bind(this));
+        router.put("/:id", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.DEVELOPER), this.updateEmployee.bind(this));
+        router.delete("/:id", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.HR), this.deleteEmployeeByID);
     }
     createEmployee(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -48,12 +69,13 @@ class EmployeeController {
                     console.log(JSON.stringify(errors));
                     throw new httpException_1.default(400, JSON.stringify(errors));
                 }
-                //   createEmployeeDto.address.line1, createEM
-                //     const address = createAddressDto.line1
                 const address = new address_entity_1.default();
-                address.line1 = createEmployeeDto.address.line1;
-                address.pincode = createEmployeeDto.address.pincode;
-                const savedEmployee = yield this.employeeService.createEmployee(createEmployeeDto.email, createEmployeeDto.name, createEmployeeDto.age, address, createEmployeeDto.password, createEmployeeDto.role);
+                address.houseno = createEmployeeDto.address.houseno;
+                address.line_1 = createEmployeeDto.address.line_1;
+                address.line_2 = createEmployeeDto.address.line_2;
+                const department = new department_entity_1.default();
+                department.id = createEmployeeDto.department.id;
+                const savedEmployee = yield this.employeeService.createEmployee(createEmployeeDto.email, createEmployeeDto.name, createEmployeeDto.age, address, createEmployeeDto.password, createEmployeeDto.role, department, createEmployeeDto.status, createEmployeeDto.experience, createEmployeeDto.joiningdate);
                 res.status(201).send(savedEmployee);
             }
             catch (error) {

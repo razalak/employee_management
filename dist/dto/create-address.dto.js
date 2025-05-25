@@ -15,14 +15,15 @@ class createAddressDto {
 }
 exports.createAddressDto = createAddressDto;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)()
-    // @IsEmail()
-    ,
-    __metadata("design:type", String)
-], createAddressDto.prototype, "line1", void 0);
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", Number)
+], createAddressDto.prototype, "houseno", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], createAddressDto.prototype, "pincode", void 0);
+], createAddressDto.prototype, "line_1", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], createAddressDto.prototype, "line_2", void 0);
 //# sourceMappingURL=create-address.dto.js.map

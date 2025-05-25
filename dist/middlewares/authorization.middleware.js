@@ -3,16 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authorizationMiddleware = void 0;
-const employee_entity_1 = require("../entities/employee.entity");
 const httpException_1 = __importDefault(require("../exceptions/httpException"));
-const authorizationMiddleware = (req, res, next) => {
-    var _a;
-    const role = (_a = req.user) === null || _a === void 0 ? void 0 : _a.role;
-    if (role !== employee_entity_1.EmployeeRole.HR) {
-        throw new httpException_1.default(402, "User has no privilage to access the resource");
-    }
-    next();
-};
-exports.authorizationMiddleware = authorizationMiddleware;
+const checkRoles = ((role) => {
+    return (req, res, next) => {
+        var _a;
+        const Role = (_a = req.user) === null || _a === void 0 ? void 0 : _a.role;
+        console.log("Role-", Role);
+        console.log("role-", role);
+        if (Role !== role) {
+            throw new httpException_1.default(402, "User has no privilage to access the resource");
+        }
+        next();
+    };
+});
+exports.default = checkRoles;
 //# sourceMappingURL=authorization.middleware.js.map

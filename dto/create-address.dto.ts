@@ -1,11 +1,12 @@
-import { IsEmail, IsNotEmpty, IsString} from "class-validator";
+import { IsEmail, isNotEmpty, IsNotEmpty, IsString,IsOptional} from "class-validator";
 
 export class createAddressDto {
   @IsNotEmpty()
-  // @IsEmail()
-  line1: string;
+  houseno:number;
 
   @IsNotEmpty()
-  @IsString()
-  pincode: string;
+  line_1: string;
+
+   @IsOptional()
+    line_2?: string;
 }

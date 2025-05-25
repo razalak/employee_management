@@ -2,20 +2,23 @@ import {Request,Response,NextFunction} from "express";
 import EmployeeService from "../services/employee.service";
 import {Router} from "express";
 import HttpException from "../exceptions/httpException";
-import { isEmail } from "../validators/emailValidator";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { CreateEmployeeDto } from "../dto/create-employee.dto";
-import { createAddressDto } from "../dto/create-address.dto";
 import Address from "../entities/address.entity";
-import { authorizationMiddleware } from "../middlewares/authorization.middleware";
+import Department from "../entities/department.entity";
+import { EmployeeRole } from "../entities/employee.entity";
+import checkRoles from "../middlewares/authorization.middleware";
+
+
+
 class EmployeeController{
     constructor(private employeeService:EmployeeService,router:Router){
         router.get("/",this.getAllEmployee.bind(this));
         router.get("/:id",this.getEmployeeByID.bind(this));
-        router.post("/",authorizationMiddleware,this.createEmployee.bind(this));
-        router.put("/:id",authorizationMiddleware,this.updateEmployee.bind(this));
-        router.delete("/:id",authorizationMiddleware,this.deleteEmployeeByID);
+        router.post("/",checkRoles(EmployeeRole.DEVELOPER),this.createEmployee.bind(this));
+        router.put("/:id",checkRoles(EmployeeRole.DEVELOPER),this.updateEmployee.bind(this));
+        router.delete("/:id",checkRoles(EmployeeRole.HR),this.deleteEmployeeByID);
     }
 
     async  createEmployee(req:Request,res:Response,next:NextFunction){
@@ -26,12 +29,15 @@ class EmployeeController{
         console.log(JSON.stringify(errors));
         throw new HttpException(400, JSON.stringify(errors));
       }
-    //   createEmployeeDto.address.line1, createEM
-   
-    //     const address = createAddressDto.line1
+
+
       const address=new Address();
-      address.line1=createEmployeeDto.address.line1;
-      address.pincode=createEmployeeDto.address.pincode;
+      address.houseno=createEmployeeDto.address.houseno;
+      address.line_1=createEmployeeDto.address.line_1;
+      address.line_2=createEmployeeDto.address.line_2;
+
+      const department=new Department();
+      department.id=createEmployeeDto.department.id;
 
       const savedEmployee = await this.employeeService.createEmployee(
         createEmployeeDto.email,
@@ -39,7 +45,11 @@ class EmployeeController{
         createEmployeeDto.age,
         address,
         createEmployeeDto.password,
-        createEmployeeDto.role
+        createEmployeeDto.role,
+        department,
+        createEmployeeDto.status,
+        createEmployeeDto.experience,
+        createEmployeeDto.joiningdate
       );
       res.status(201).send(savedEmployee);
     } catch (error) {
@@ -65,18 +75,35 @@ class EmployeeController{
             next(error);
         }
     }
-     updateEmployee=async (req:Request,res:Response)=>{
+     updateEmployee=async (req:Request,res:Response,next:NextFunction)=>{
+      try{
         const id=req.params.id;
-        const name=req.params.name;
-        const email=req.params.email;
-        await this.employeeService.updateEmployee(id,name,email);
+        const name=req.body.name;
+        const email=req.body.email;
+        const age=req.body.age;
+        const address=req.body.address;
+        const password=req.body.password;
+        const role=req.body.role;
+        const department=req.body.department;
+        const status=req.body.status;
+        const joiningdate=req.body.joiningdate;
+        const experience=req.body.experience;
+        await this.employeeService.updateEmployee(id,name,email,age,address,password,role,department,status,joiningdate,experience);
         res.status(200).send();
+      }catch(error){
+        console.error(error);
+        next();
+      }
     }
 
-     deleteEmployeeByID=async (req:Request,res:Response)=>{
+     deleteEmployeeByID=async (req:Request,res:Response,next:NextFunction)=>{
+      try{
         const id=req.params.id;
         await this.employeeService.deleteEmployeeByID(id);
         res.status(200).send();
+      }catch(error){
+          next(error);
+        }
     }
 }
 

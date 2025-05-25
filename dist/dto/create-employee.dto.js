@@ -14,6 +14,7 @@ const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const create_address_dto_1 = require("./create-address.dto");
 const employee_entity_1 = require("../entities/employee.entity");
+const create_department_dto_1 = require("./create-department.dto");
 class CreateEmployeeDto {
 }
 exports.CreateEmployeeDto = CreateEmployeeDto;
@@ -46,4 +47,22 @@ __decorate([
     (0, class_validator_1.IsEnum)(employee_entity_1.EmployeeRole),
     __metadata("design:type", String)
 ], CreateEmployeeDto.prototype, "role", void 0);
+__decorate([
+    (0, class_validator_1.ValidateNested)(),
+    (0, class_transformer_1.Type)(() => create_department_dto_1.createDepartmentDto),
+    __metadata("design:type", create_department_dto_1.createDepartmentDto)
+], CreateEmployeeDto.prototype, "department", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(employee_entity_1.EmployeeStatus),
+    __metadata("design:type", String)
+], CreateEmployeeDto.prototype, "status", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateEmployeeDto.prototype, "experience", void 0);
+__decorate([
+    (0, class_transformer_1.Type)(() => Date),
+    (0, class_validator_1.IsDate)(),
+    __metadata("design:type", Date)
+], CreateEmployeeDto.prototype, "joiningdate", void 0);
 //# sourceMappingURL=create-employee.dto.js.map

@@ -9,7 +9,7 @@ import EmployeeController from "../controller/employee.controller";
 
 const authRouter=new Router();
 
-const AuthService=new authService(employeeService);
-const authController=new AuthController(AuthService,authRouter);
+export const AuthService=new authService(employeeService);
+export const authController=new AuthController(AuthService,authRouter);
 
 export default authRouter;

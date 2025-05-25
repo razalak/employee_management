@@ -7,9 +7,11 @@ class Address extends AbstractEntity{
     @PrimaryGeneratedColumn()
     id:number;
     @Column()
-    line1:string;
+    houseno:number;
     @Column()
-    pincode:string;
+    line_1:string;
+    @Column()
+    line_2:string;
     @OneToOne(()=>Employee)
     employee:Employee;   
 };

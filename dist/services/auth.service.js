@@ -16,13 +16,16 @@ const constants_1 = require("../utils/constants");
 const httpException_1 = __importDefault(require("../exceptions/httpException"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const logger_service_1 = require("./logger.service");
 class authService {
     constructor(employeeService) {
         this.employeeService = employeeService;
+        this.logger = logger_service_1.LoggerService.getInstance('AuthService');
     }
     login(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             const employee = yield this.employeeService.getEmployeeByEmail(email);
+            this.logger.info(employee);
             if (!employee) {
                 throw new httpException_1.default(404, "no such user");
             }

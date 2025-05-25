@@ -23,12 +23,16 @@ __decorate([
 ], Address.prototype, "id", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], Address.prototype, "line1", void 0);
+    __metadata("design:type", Number)
+], Address.prototype, "houseno", void 0);
 __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
-], Address.prototype, "pincode", void 0);
+], Address.prototype, "line_1", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Address.prototype, "line_2", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => employee_entity_1.default),
     __metadata("design:type", employee_entity_1.default)

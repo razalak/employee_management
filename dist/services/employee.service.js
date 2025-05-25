@@ -15,12 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const employee_entity_1 = __importDefault(require("../entities/employee.entity"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const logger_service_1 = require("./logger.service");
+const httpException_1 = __importDefault(require("../exceptions/httpException"));
 class EmployeeService {
     constructor(employeeRepository) {
         this.employeeRepository = employeeRepository;
-        this.logger = logger_service_1.LoggerService.getInstance(EmployeeService.name);
+        this.logger = logger_service_1.LoggerService.getInstance('EmployeeService');
     }
-    createEmployee(email, name, age, address, password, role) {
+    createEmployee(email, name, age, address, password, role, department, status, experience, joiningdate) {
         return __awaiter(this, void 0, void 0, function* () {
             const newEmployee = new employee_entity_1.default();
             newEmployee.name = name;
@@ -29,6 +30,10 @@ class EmployeeService {
             newEmployee.address = address;
             newEmployee.password = yield bcrypt_1.default.hash(password, 10);
             newEmployee.role = role;
+            newEmployee.department = department;
+            newEmployee.status = status;
+            newEmployee.Experience = experience;
+            newEmployee.joiningdate = joiningdate;
             return this.employeeRepository.create(newEmployee);
         });
     }
@@ -40,6 +45,7 @@ class EmployeeService {
     getEmployeeByID(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let employee = this.employeeRepository.findOneByID(id);
+            this.logger.info(employee);
             if (!employee) {
                 throw new Error("Employee Not Found");
             }
@@ -51,13 +57,21 @@ class EmployeeService {
             return this.employeeRepository.findOneByEmail(email);
         });
     }
-    updateEmployee(id, name, email) {
+    updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, experience) {
         return __awaiter(this, void 0, void 0, function* () {
             const existingEmployee = this.employeeRepository.findOneByID(id);
             if (existingEmployee) {
                 const employee = new employee_entity_1.default();
                 employee.name = name;
                 employee.email = email;
+                employee.age = age;
+                employee.address = address;
+                employee.password = password;
+                employee.role = role;
+                employee.department = department;
+                employee.status = status;
+                employee.joiningdate = joiningdate;
+                employee.Experience = experience;
                 yield this.employeeRepository.update(id, employee);
             }
         });
@@ -65,12 +79,10 @@ class EmployeeService {
     deleteEmployeeByID(id) {
         return __awaiter(this, void 0, void 0, function* () {
             const employee = yield this.employeeRepository.findOneByID(id);
+            if (!employee) {
+                throw new httpException_1.default(404, "employee not found");
+            }
             yield this.employeeRepository.deleteOneByID(id);
-        });
-    }
-    remove(empid) {
-        return __awaiter(this, void 0, void 0, function* () {
-            yield this.employeeRepository.remove(empid);
         });
     }
 }
