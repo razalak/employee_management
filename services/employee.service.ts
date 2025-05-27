@@ -35,6 +35,7 @@ class EmployeeService{
         let employee=this.employeeRepository.findOneByID(id);
         this.logger.info(employee);
         if(!employee){
+          this.logger.error("employee not found");
           throw new Error("Employee Not Found");
         }
         return employee;
@@ -59,12 +60,15 @@ class EmployeeService{
             employee.joiningdate=joiningdate;
             employee.Experience=experience;
             await this.employeeRepository.update(id,employee);
+        }else{
+          this.logger.error("employee not exist");
         }
    }
 
    async deleteEmployeeByID(id:number):Promise<void>{
       const employee=await this.employeeRepository.findOneByID(id);
       if(!employee){
+          this.logger.error("employee not found");
           throw new HttpException(404,"employee not found");
       }
      await this.employeeRepository.deleteOneByID(id);
