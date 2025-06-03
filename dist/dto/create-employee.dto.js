@@ -59,7 +59,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
-], CreateEmployeeDto.prototype, "experience", void 0);
+], CreateEmployeeDto.prototype, "Experience", void 0);
 __decorate([
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", Date)

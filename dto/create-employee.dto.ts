@@ -37,7 +37,7 @@ export class CreateEmployeeDto {
   status:EmployeeStatus;
 
   @IsNumber()
-  experience:number;
+  Experience:number;
 
   @IsDateString()
   joiningdate:Date; 

@@ -48,7 +48,7 @@ class EmployeeController{
         createEmployeeDto.role,
         department,
         createEmployeeDto.status,
-        createEmployeeDto.experience,
+        createEmployeeDto.Experience,
         createEmployeeDto.joiningdate,
         createEmployeeDto.employeeId
       );
@@ -89,9 +89,9 @@ class EmployeeController{
         const department=req.body.department;
         const status=req.body.status;
         const joiningdate=req.body.joiningdate;
-        const experience=req.body.experience;
+        const Experience=req.body.Experience;
         const employeeId=req.body.employeeId;
-        await this.employeeService.updateEmployee(id,name,email,age,address,password,role,department,status,joiningdate,experience,employeeId);
+        await this.employeeService.updateEmployee(id,name,email,age,address,password,role,department,status,joiningdate,Experience,employeeId);
         res.status(200).send();
       }catch(error){
         console.error(error);

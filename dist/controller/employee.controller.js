@@ -36,9 +36,9 @@ class EmployeeController {
                 const department = req.body.department;
                 const status = req.body.status;
                 const joiningdate = req.body.joiningdate;
-                const experience = req.body.experience;
+                const Experience = req.body.Experience;
                 const employeeId = req.body.employeeId;
-                yield this.employeeService.updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, experience, employeeId);
+                yield this.employeeService.updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, Experience, employeeId);
                 res.status(200).send();
             }
             catch (error) {
@@ -77,7 +77,7 @@ class EmployeeController {
                 address.line_2 = createEmployeeDto.address.line_2;
                 const department = new department_entity_1.default();
                 department.id = createEmployeeDto.department.id;
-                const savedEmployee = yield this.employeeService.createEmployee(createEmployeeDto.email, createEmployeeDto.name, createEmployeeDto.age, address, createEmployeeDto.password, createEmployeeDto.role, department, createEmployeeDto.status, createEmployeeDto.experience, createEmployeeDto.joiningdate, createEmployeeDto.employeeId);
+                const savedEmployee = yield this.employeeService.createEmployee(createEmployeeDto.email, createEmployeeDto.name, createEmployeeDto.age, address, createEmployeeDto.password, createEmployeeDto.role, department, createEmployeeDto.status, createEmployeeDto.Experience, createEmployeeDto.joiningdate, createEmployeeDto.employeeId);
                 res.status(201).send(savedEmployee);
             }
             catch (error) {

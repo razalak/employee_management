@@ -21,7 +21,7 @@ class EmployeeService {
         this.employeeRepository = employeeRepository;
         this.logger = logger_service_1.LoggerService.getInstance('EmployeeService');
     }
-    createEmployee(email, name, age, address, password, role, department, status, experience, joiningdate, employeeId) {
+    createEmployee(email, name, age, address, password, role, department, status, Experience, joiningdate, employeeId) {
         return __awaiter(this, void 0, void 0, function* () {
             const newEmployee = new employee_entity_1.default();
             newEmployee.name = name;
@@ -32,7 +32,7 @@ class EmployeeService {
             newEmployee.role = role;
             newEmployee.department = department;
             newEmployee.status = status;
-            newEmployee.Experience = experience;
+            newEmployee.Experience = Experience;
             newEmployee.joiningdate = joiningdate;
             newEmployee.employeeId = employeeId;
             return this.employeeRepository.create(newEmployee);
@@ -59,7 +59,7 @@ class EmployeeService {
             return this.employeeRepository.findOneByEmail(email);
         });
     }
-    updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, experience, employeeId) {
+    updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, Experience, employeeId) {
         return __awaiter(this, void 0, void 0, function* () {
             const existingEmployee = this.employeeRepository.findOneByID(id);
             if (existingEmployee) {
@@ -75,7 +75,7 @@ class EmployeeService {
                 employee.department = department;
                 employee.status = status;
                 employee.joiningdate = joiningdate;
-                employee.Experience = experience;
+                employee.Experience = Experience;
                 employee.employeeId = employeeId;
                 yield this.employeeRepository.update(id, employee);
             }

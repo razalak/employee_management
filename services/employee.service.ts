@@ -10,7 +10,7 @@ class EmployeeService{
      private logger=LoggerService.getInstance('EmployeeService');
     constructor(private employeeRepository:EmployeeRepository){}
 
-    async createEmployee(email:string,name:string,age:number,address:Address,password:string,role:EmployeeRole,department:Department,status:EmployeeStatus,experience:number,joiningdate:Date,employeeId:string):Promise<Employee>{
+    async createEmployee(email:string,name:string,age:number,address:Address,password:string,role:EmployeeRole,department:Department,status:EmployeeStatus,Experience:number,joiningdate:Date,employeeId:string):Promise<Employee>{
         const newEmployee=new Employee();
         newEmployee.name=name;
         newEmployee.email=email;
@@ -20,7 +20,7 @@ class EmployeeService{
         newEmployee.role=role;
         newEmployee.department=department;
         newEmployee.status=status;
-        newEmployee.Experience=experience;
+        newEmployee.Experience=Experience;
         newEmployee.joiningdate=joiningdate;
         newEmployee.employeeId=employeeId;
         return this.employeeRepository.create(newEmployee);
@@ -46,7 +46,7 @@ class EmployeeService{
         return this.employeeRepository.findOneByEmail(email);
    }
 
-   async updateEmployee(id:number,name:string,email:string,age:number,address:Address,password:string,role:EmployeeRole,department:Department,status:EmployeeStatus,joiningdate:Date,experience:number,employeeId:string):Promise<void>{
+   async updateEmployee(id:number,name:string,email:string,age:number,address:Address,password:string,role:EmployeeRole,department:Department,status:EmployeeStatus,joiningdate:Date,Experience:number,employeeId:string):Promise<void>{
         const existingEmployee=this.employeeRepository.findOneByID(id);
         if(existingEmployee){
             const employee=new Employee();
@@ -61,7 +61,7 @@ class EmployeeService{
             employee.department=department;
             employee.status=status;
             employee.joiningdate=joiningdate;
-            employee.Experience=experience;
+            employee.Experience=Experience;
             employee.employeeId=employeeId;
             await this.employeeRepository.update(id,employee);
         }else{
