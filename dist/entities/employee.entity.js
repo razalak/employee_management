@@ -89,6 +89,10 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", Number)
 ], Employee.prototype, "Experience", void 0);
+__decorate([
+    (0, typeorm_1.Column)(),
+    __metadata("design:type", String)
+], Employee.prototype, "employeeId", void 0);
 Employee = __decorate([
     (0, typeorm_1.Entity)()
 ], Employee);

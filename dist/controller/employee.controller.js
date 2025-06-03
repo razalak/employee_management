@@ -25,6 +25,7 @@ class EmployeeController {
         this.employeeService = employeeService;
         this.updateEmployee = (req, res, next) => __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("details of employee", req.body);
                 const id = req.params.id;
                 const name = req.body.name;
                 const email = req.body.email;
@@ -36,7 +37,8 @@ class EmployeeController {
                 const status = req.body.status;
                 const joiningdate = req.body.joiningdate;
                 const experience = req.body.experience;
-                yield this.employeeService.updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, experience);
+                const employeeId = req.body.employeeId;
+                yield this.employeeService.updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, experience, employeeId);
                 res.status(200).send();
             }
             catch (error) {
@@ -58,7 +60,7 @@ class EmployeeController {
         router.get("/:id", this.getEmployeeByID.bind(this));
         router.post("/", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.DEVELOPER), this.createEmployee.bind(this));
         router.put("/:id", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.DEVELOPER), this.updateEmployee.bind(this));
-        router.delete("/:id", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.HR), this.deleteEmployeeByID);
+        router.delete("/:id", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.DEVELOPER), this.deleteEmployeeByID);
     }
     createEmployee(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -75,7 +77,7 @@ class EmployeeController {
                 address.line_2 = createEmployeeDto.address.line_2;
                 const department = new department_entity_1.default();
                 department.id = createEmployeeDto.department.id;
-                const savedEmployee = yield this.employeeService.createEmployee(createEmployeeDto.email, createEmployeeDto.name, createEmployeeDto.age, address, createEmployeeDto.password, createEmployeeDto.role, department, createEmployeeDto.status, createEmployeeDto.experience, createEmployeeDto.joiningdate);
+                const savedEmployee = yield this.employeeService.createEmployee(createEmployeeDto.email, createEmployeeDto.name, createEmployeeDto.age, address, createEmployeeDto.password, createEmployeeDto.role, department, createEmployeeDto.status, createEmployeeDto.experience, createEmployeeDto.joiningdate, createEmployeeDto.employeeId);
                 res.status(201).send(savedEmployee);
             }
             catch (error) {

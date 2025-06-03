@@ -3,7 +3,7 @@ import { IsNotEmpty, IsNumber, isNumber, IsString,IsOptional} from "class-valida
 export class createDepartmentDto {
   @IsNotEmpty()
   @IsNumber()
-  id: number;
+  id?: number;
 
   @IsOptional()
   dpt_name?: string;

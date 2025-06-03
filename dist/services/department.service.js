@@ -37,6 +37,7 @@ class DepartmentServices {
             let department = this.departmentRepository.findOneByID(id);
             this.logger.info(department);
             if (!department) {
+                this.logger.error("department not found");
                 throw new Error("Department Not Found");
             }
             return department;
@@ -52,6 +53,7 @@ class DepartmentServices {
                 yield this.departmentRepository.update(id, department);
             }
             else {
+                this.logger.error("department not exist");
                 throw new Error();
             }
         });

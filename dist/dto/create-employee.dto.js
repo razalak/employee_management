@@ -61,8 +61,11 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateEmployeeDto.prototype, "experience", void 0);
 __decorate([
-    (0, class_transformer_1.Type)(() => Date),
-    (0, class_validator_1.IsDate)(),
+    (0, class_validator_1.IsDateString)(),
     __metadata("design:type", Date)
 ], CreateEmployeeDto.prototype, "joiningdate", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateEmployeeDto.prototype, "employeeId", void 0);
 //# sourceMappingURL=create-employee.dto.js.map

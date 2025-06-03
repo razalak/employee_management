@@ -10,7 +10,7 @@ class EmployeeService{
      private logger=LoggerService.getInstance('EmployeeService');
     constructor(private employeeRepository:EmployeeRepository){}
 
-    async createEmployee(email:string,name:string,age:number,address:Address,password:string,role:EmployeeRole,department:Department,status:EmployeeStatus,experience:number,joiningdate:Date):Promise<Employee>{
+    async createEmployee(email:string,name:string,age:number,address:Address,password:string,role:EmployeeRole,department:Department,status:EmployeeStatus,experience:number,joiningdate:Date,employeeId:string):Promise<Employee>{
         const newEmployee=new Employee();
         newEmployee.name=name;
         newEmployee.email=email;
@@ -22,6 +22,7 @@ class EmployeeService{
         newEmployee.status=status;
         newEmployee.Experience=experience;
         newEmployee.joiningdate=joiningdate;
+        newEmployee.employeeId=employeeId;
         return this.employeeRepository.create(newEmployee);
     }
 
@@ -45,7 +46,7 @@ class EmployeeService{
         return this.employeeRepository.findOneByEmail(email);
    }
 
-   async updateEmployee(id:number,name:string,email:string,age:number,address:Address,password:string,role:EmployeeRole,department:Department,status:EmployeeStatus,joiningdate:Date,experience:number):Promise<void>{
+   async updateEmployee(id:number,name:string,email:string,age:number,address:Address,password:string,role:EmployeeRole,department:Department,status:EmployeeStatus,joiningdate:Date,experience:number,employeeId:string):Promise<void>{
         const existingEmployee=this.employeeRepository.findOneByID(id);
         if(existingEmployee){
             const employee=new Employee();
@@ -53,12 +54,15 @@ class EmployeeService{
             employee.email=email;
             employee.age=age;
             employee.address=address;
-            employee.password=password;
+            if(password.length>0){
+            employee.password=await bcrypt.hash(password,10);
+            }
             employee.role=role;
             employee.department=department;
             employee.status=status;
             employee.joiningdate=joiningdate;
             employee.Experience=experience;
+            employee.employeeId=employeeId;
             await this.employeeRepository.update(id,employee);
         }else{
           this.logger.error("employee not exist");

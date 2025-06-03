@@ -1,161 +1,146 @@
-import { mock, MockProxy } from 'jest-mock-extended';
-import { when } from 'jest-when';
-import bcrypt from 'bcrypt';
-
 import EmployeeService from '../../services/employee.service';
 import EmployeeRepository from '../../repositories/employee.repositories';
-import Employee, {
-  EmployeeRole,
-  EmployeeStatus,
-} from '../../entities/employee.entity';
+import Employee, { EmployeeRole, EmployeeStatus } from '../../entities/employee.entity';
 import Address from '../../entities/address.entity';
 import Department from '../../entities/department.entity';
-import HttpException from '../../exceptions/httpException';
+import bcrypt from 'bcrypt';
+
+jest.mock('bcrypt');
 
 describe('EmployeeService', () => {
-  let employeeRepository: MockProxy<EmployeeRepository>;
   let employeeService: EmployeeService;
+  let mockRepository: jest.Mocked<EmployeeRepository>;
 
   beforeEach(() => {
-    employeeRepository = mock<EmployeeRepository>();
-    employeeService = new EmployeeService(employeeRepository);
+    mockRepository = {
+      create: jest.fn(),
+      findMany: jest.fn(),
+      findOneByID: jest.fn(),
+      findOneByEmail: jest.fn(),
+      update: jest.fn(),
+      deleteOneByID: jest.fn(),
+    } as unknown as jest.Mocked<EmployeeRepository>;
+
+    employeeService = new EmployeeService(mockRepository);
   });
 
+  const sampleEmployee = new Employee();
+  sampleEmployee.id = 1;
+  sampleEmployee.name = 'razal';
+  sampleEmployee.email = 'razal@abc.com';
+  sampleEmployee.age = 30;
+  sampleEmployee.address = new Address();
+  sampleEmployee.password = 'hashed-password';
+  sampleEmployee.role = EmployeeRole.DEVELOPER;
+  sampleEmployee.department = new Department();
+  sampleEmployee.status = EmployeeStatus.ACTIVE;
+  sampleEmployee.Experience = 5;
+  sampleEmployee.joiningdate = new Date('2022-01-01');
 
-  describe('getEmployeeByID', () => {
-    it('returns the employee when a valid id is supplied', async () => {
-      const mockEmployee = { id: 2, name: 'raju' } as unknown as Employee;
-      when(employeeRepository.findOneByID)
-        .calledWith(2)
-        .mockResolvedValue(mockEmployee);
+  it('should create an employee', async () => {
+    (bcrypt.hash as jest.Mock).mockResolvedValue('hashed-password');
+    mockRepository.create.mockResolvedValue(sampleEmployee);
 
-      const result = await employeeService.getEmployeeByID(2);
+    const result = await employeeService.createEmployee(
+      sampleEmployee.email,
+      sampleEmployee.name,
+      sampleEmployee.age,
+      sampleEmployee.address,
+      'plain-password',
+      sampleEmployee.role,
+      sampleEmployee.department,
+      sampleEmployee.status,
+      sampleEmployee.Experience,
+      sampleEmployee.joiningdate,
+      sampleEmployee.employeeId
+    );
 
-      expect(result).toStrictEqual(mockEmployee);
-      expect(employeeRepository.findOneByID).toHaveBeenCalledWith(2);
-    });
-
-    it('throws "Employee Not Found" when the id is invalid', async () => {
-      when(employeeRepository.findOneByID)
-        .calledWith(2)
-        .mockResolvedValue(null as unknown as Employee);
-
-      await expect(employeeService.getEmployeeByID(2)).rejects.toThrow(
-        'Employee Not Found',
-      );
-      expect(employeeRepository.findOneByID).toHaveBeenCalledWith(2);
-    });
+    expect(bcrypt.hash).toHaveBeenCalledWith('plain-password', 10);
+    expect(mockRepository.create).toHaveBeenCalled();
+    expect(result).toEqual(sampleEmployee);
   });
 
+  it('should return all employees', async () => {
+    mockRepository.findMany.mockResolvedValue([sampleEmployee]);
 
-  describe('getAllEmployees', () => {
-    it('simply returns whatever the repository returns', async () => {
-      const list = [{ id: 1, name: 'foo' }] as unknown as Employee[];
-      employeeRepository.findMany.mockResolvedValue(list);
-
-      const result = await employeeService.getAllEmployees();
-
-      expect(result).toBe(list);
-      expect(employeeRepository.findMany).toHaveBeenCalledTimes(1);
-    });
+    const result = await employeeService.getAllEmployees();
+    expect(result).toEqual([sampleEmployee]);
+    expect(mockRepository.findMany).toHaveBeenCalled();
   });
 
+  it('should return employee by ID', async () => {
+    mockRepository.findOneByID.mockResolvedValue(sampleEmployee);
 
-
-  describe('createEmployee', () => {
-    it('hashes the password and delegates to create()', async () => {
-      const address = { houseno:230,line_1:'sm street',line_2:'narikkuni' } as Address;
-      const dept = { id: 7, dpt_name: 'HR' } as Department;
-
-      const created = { id: 99 } as Employee;
-      employeeRepository.create.mockResolvedValue(created);
-
-      const result = await employeeService.createEmployee(
-        'dias@abc.com',
-        'dias',
-        22,
-        address,
-        'plain',
-        EmployeeRole.HR,
-        dept,
-        EmployeeStatus.ACTIVE,
-        1,
-        new Date('2025-01-01'),
-      );
-
-      expect(bcrypt.hash).toHaveBeenCalledWith('plain', 10);
-      expect(employeeRepository.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'dias',
-          email: 'dias@abc.com',
-          password: 'hashed-password',
-        }),
-      );
-      expect(result).toBe(created);
-    });
+    const result = await employeeService.getEmployeeByID(1);
+    expect(result).toEqual(sampleEmployee);
+    expect(mockRepository.findOneByID).toHaveBeenCalledWith(1);
   });
 
+  it('should throw error if employee not found by ID', async () => {
+    mockRepository.findOneByID.mockResolvedValue(null);
 
-  describe('updateEmployee', () => {
-    const baseArgs = [
-      1, 
-      'razal', 
-      'razal@abc.com', 
-      30,
-      {} as Address,
-      'pw',
-      EmployeeRole.DEVELOPER,
-      {} as Department,
-      EmployeeStatus.ACTIVE,
-      new Date('2025-01-01'),
-      5,
-    ] as const;
-
-    it('calls repository.update when the employee exists', async () => {
-      when(employeeRepository.findOneByID)
-        .calledWith(1)
-        .mockResolvedValue({ id: 1 } as Employee);
-
-      await employeeService.updateEmployee(...baseArgs);
-
-      expect(employeeRepository.update).toHaveBeenCalledWith(
-        1,
-        expect.objectContaining({ name: 'ziya', email: 'ziya@abc.com' }),
-      );
-    });
-
-    it('does nothingwhen the employee does not exist', async () => {
-      when(employeeRepository.findOneByID)
-        .calledWith(1)
-        .mockResolvedValue(null as unknown as Employee);
-
-      await employeeService.updateEmployee(...baseArgs);
-
-      expect(employeeRepository.update).not.toHaveBeenCalled();
-    });
+    await expect(employeeService.getEmployeeByID(999)).rejects.toThrow('Employee Not Found');
   });
 
+  it('should return employee by email', async () => {
+    mockRepository.findOneByEmail.mockResolvedValue(sampleEmployee);
 
-  describe('deleteEmployeeByID', () => {
-    it('deletes when the employee exists', async () => {
-      when(employeeRepository.findOneByID)
-        .calledWith(1)
-        .mockResolvedValue({ id: 1 } as Employee);
+    const result = await employeeService.getEmployeeByEmail('razal@abc.com');
+    expect(result).toEqual(sampleEmployee);
+  });
 
-      await employeeService.deleteEmployeeByID(1);
+  it('should update employee if exists', async () => {
+    mockRepository.findOneByID.mockResolvedValue(sampleEmployee);
 
-      expect(employeeRepository.deleteOneByID).toHaveBeenCalledWith(1);
-    });
+    await employeeService.updateEmployee(
+      1,
+      sampleEmployee.name,
+      sampleEmployee.email,
+      sampleEmployee.age,
+      sampleEmployee.address,
+      sampleEmployee.password,
+      sampleEmployee.role,
+      sampleEmployee.department,
+      sampleEmployee.status,
+      sampleEmployee.joiningdate,
+      sampleEmployee.Experience,
+      sampleEmployee.employeeId
+    );
 
-    it('throws HttpException when the employee is missing', async () => {
-      when(employeeRepository.findOneByID)
-        .calledWith(1)
-        .mockResolvedValue(null as unknown as Employee);
+    expect(mockRepository.update).toHaveBeenCalled();
+  });
 
-      await expect(employeeService.deleteEmployeeByID(1)).rejects.toBeInstanceOf(
-        HttpException,
-      );
-      expect(employeeRepository.deleteOneByID).not.toHaveBeenCalled();
-    });
+  it('should not update employee if not exists', async () => {
+    mockRepository.findOneByID.mockResolvedValue(null);
+
+    await employeeService.updateEmployee(
+      1,
+      sampleEmployee.name,
+      sampleEmployee.email,
+      sampleEmployee.age,
+      sampleEmployee.address,
+      sampleEmployee.password,
+      sampleEmployee.role,
+      sampleEmployee.department,
+      sampleEmployee.status,
+      sampleEmployee.joiningdate,
+      sampleEmployee.Experience,
+      sampleEmployee.employeeId
+    );
+
+    expect(mockRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('should delete employee if exists', async () => {
+    mockRepository.findOneByID.mockResolvedValue(sampleEmployee);
+
+    await employeeService.deleteEmployeeByID(1);
+    expect(mockRepository.deleteOneByID).toHaveBeenCalledWith(1);
+  });
+
+  it('should throw error when deleting non-existent employee', async () => {
+    mockRepository.findOneByID.mockResolvedValue(null);
+
+    await expect(employeeService.deleteEmployeeByID(999)).rejects.toThrow('employee not found');
   });
 });

@@ -61,6 +61,9 @@ class Employee extends AbstractEntity{
 
     @Column()
     Experience:number;
+
+    @Column()
+    employeeId:string;
   }
   
   export default Employee;

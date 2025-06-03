@@ -56,7 +56,7 @@ class EmployeeRepository {
     }
     update(id, employee) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.repository.save(Object.assign({ id }, employee));
+            yield this.repository.update(id, Object.assign({}, employee));
         });
     }
     deleteOneByID(id) {
