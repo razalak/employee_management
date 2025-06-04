@@ -19,7 +19,7 @@ const httpException_1 = __importDefault(require("../exceptions/httpException"));
 class EmployeeService {
     constructor(employeeRepository) {
         this.employeeRepository = employeeRepository;
-        this.logger = logger_service_1.LoggerService.getInstance('EmployeeService');
+        this.logger = logger_service_1.LoggerService.getInstance("EmployeeService");
     }
     createEmployee(email, name, age, address, password, role, department, status, Experience, joiningdate, employeeId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -59,25 +59,28 @@ class EmployeeService {
             return this.employeeRepository.findOneByEmail(email);
         });
     }
-    updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, Experience, employeeId) {
+    updateEmployee(id, name, email, age, address, role, department, status, joiningdate, Experience, employeeId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const existingEmployee = this.employeeRepository.findOneByID(id);
+            const existingEmployee = yield this.employeeRepository.findOneByID(id);
             if (existingEmployee) {
-                const employee = new employee_entity_1.default();
-                employee.name = name;
-                employee.email = email;
-                employee.age = age;
-                employee.address = address;
-                if (password.length > 0) {
-                    employee.password = yield bcrypt_1.default.hash(password, 10);
+                existingEmployee.name = name;
+                existingEmployee.email = email;
+                existingEmployee.age = age;
+                if (existingEmployee.address) {
+                    existingEmployee.address.houseno = address.houseno;
+                    existingEmployee.address.line_1 = address.line_1;
+                    existingEmployee.address.line_2 = address.line_2;
                 }
-                employee.role = role;
-                employee.department = department;
-                employee.status = status;
-                employee.joiningdate = joiningdate;
-                employee.Experience = Experience;
-                employee.employeeId = employeeId;
-                yield this.employeeRepository.update(id, employee);
+                else {
+                    existingEmployee.address = address;
+                }
+                existingEmployee.role = role;
+                existingEmployee.department = department;
+                existingEmployee.status = status;
+                existingEmployee.joiningdate = joiningdate;
+                existingEmployee.Experience = Experience;
+                existingEmployee.employeeId = employeeId;
+                yield this.employeeRepository.update(existingEmployee);
             }
             else {
                 this.logger.error("employee not exist");

@@ -16,9 +16,9 @@ class EmployeeController{
     constructor(private employeeService:EmployeeService,router:Router){
         router.get("/",this.getAllEmployee.bind(this));
         router.get("/:id",this.getEmployeeByID.bind(this));
-        router.post("/",checkRoles(EmployeeRole.DEVELOPER),this.createEmployee.bind(this));
-        router.put("/:id",checkRoles(EmployeeRole.DEVELOPER),this.updateEmployee.bind(this));
-        router.delete("/:id",checkRoles(EmployeeRole.DEVELOPER),this.deleteEmployeeByID);
+        router.post("/",checkRoles(EmployeeRole.HR),this.createEmployee.bind(this));
+        router.put("/:id",checkRoles(EmployeeRole.HR),this.updateEmployee.bind(this));
+        router.delete("/:id",checkRoles(EmployeeRole.HR),this.deleteEmployeeByID);
     }
 
     async  createEmployee(req:Request,res:Response,next:NextFunction){
@@ -84,14 +84,13 @@ class EmployeeController{
         const email=req.body.email;
         const age=req.body.age;
         const address=req.body.address;
-        const password=req.body.password;
         const role=req.body.role;
         const department=req.body.department;
         const status=req.body.status;
         const joiningdate=req.body.joiningdate;
         const Experience=req.body.Experience;
         const employeeId=req.body.employeeId;
-        await this.employeeService.updateEmployee(id,name,email,age,address,password,role,department,status,joiningdate,Experience,employeeId);
+        await this.employeeService.updateEmployee(id,name,email,age,address,role,department,status,joiningdate,Experience,employeeId);
         res.status(200).send();
       }catch(error){
         console.error(error);

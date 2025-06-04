@@ -54,9 +54,9 @@ class EmployeeRepository {
             });
         });
     }
-    update(id, employee) {
+    update(employee) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.repository.update(id, Object.assign({}, employee));
+            yield this.repository.save(employee);
         });
     }
     deleteOneByID(id) {

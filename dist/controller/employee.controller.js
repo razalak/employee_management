@@ -31,14 +31,13 @@ class EmployeeController {
                 const email = req.body.email;
                 const age = req.body.age;
                 const address = req.body.address;
-                const password = req.body.password;
                 const role = req.body.role;
                 const department = req.body.department;
                 const status = req.body.status;
                 const joiningdate = req.body.joiningdate;
                 const Experience = req.body.Experience;
                 const employeeId = req.body.employeeId;
-                yield this.employeeService.updateEmployee(id, name, email, age, address, password, role, department, status, joiningdate, Experience, employeeId);
+                yield this.employeeService.updateEmployee(id, name, email, age, address, role, department, status, joiningdate, Experience, employeeId);
                 res.status(200).send();
             }
             catch (error) {
@@ -58,9 +57,9 @@ class EmployeeController {
         });
         router.get("/", this.getAllEmployee.bind(this));
         router.get("/:id", this.getEmployeeByID.bind(this));
-        router.post("/", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.DEVELOPER), this.createEmployee.bind(this));
-        router.put("/:id", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.DEVELOPER), this.updateEmployee.bind(this));
-        router.delete("/:id", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.DEVELOPER), this.deleteEmployeeByID);
+        router.post("/", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.HR), this.createEmployee.bind(this));
+        router.put("/:id", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.HR), this.updateEmployee.bind(this));
+        router.delete("/:id", (0, authorization_middleware_1.default)(employee_entity_1.EmployeeRole.HR), this.deleteEmployeeByID);
     }
     createEmployee(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {

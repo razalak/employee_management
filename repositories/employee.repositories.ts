@@ -35,8 +35,8 @@ class EmployeeRepository{
             }
         });
     }
-    async update(id:number,employee:Employee):Promise <void>{
-        await this.repository.update(id,{...employee});
+    async update(employee:Employee):Promise <void>{
+        await this.repository.save(employee);
     }
     async deleteOneByID(id:number):Promise<void>{
         const employee=await this.findOneByID(id);
